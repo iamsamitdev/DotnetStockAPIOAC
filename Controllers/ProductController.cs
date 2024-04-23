@@ -11,10 +11,16 @@ public class ProductController: ControllerBase
     // สร้าง Object ของ ApplicationDbContext
     private readonly ApplicationDbContext _context;
 
+    // สร้าง Object อ่าน Path ของไฟล์
+    private readonly IWebHostEnvironment _env;
+
     // สร้าง Constructor รับค่า ApplicationDbContext เข้ามา
-    public ProductController(ApplicationDbContext context)
+    public ProductController(
+        ApplicationDbContext context, 
+        IWebHostEnvironment env)
     {
         _context = context;
+        _env = env;
     }
 
     // ฟังก์ชันสำหรับการดึงข้อมูล Product ทั้งหมด
@@ -80,10 +86,36 @@ public class ProductController: ControllerBase
     // ฟังก์ชันสำหรับการเพิ่มข้อมูล Product
     // POST: /api/product
     [HttpPost]
-    public ActionResult<Product> AddProduct(Product product)
+    public async Task<ActionResult<Product>> AddProduct([FromForm] Product product, IFormFile? image)
     {
         // เพิ่มข้อมูลลงในตาราง Product
         _context.Product.Add(product);
+
+        // ตรวจสอบว่ามีการอัพโหลดไฟล์รูปภาพหรือไม่
+        if(image != null){
+            // กำหนดชื่อไฟล์รูปภาพใหม่
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+
+            // บันทึกไฟล์รูปภาพลงในโฟลเดอร์ wwwroot/uploads
+            string uploadFolder = Path.Combine(_env.WebRootPath, "uploads");
+
+            // ตรวจสอบว่าโฟลเดอร์ uploads ไม่มีอยู่ให้สร้างโฟลเดอร์
+            if(!Directory.Exists(uploadFolder)){
+                Directory.CreateDirectory(uploadFolder);
+            }
+
+            // Upload ไฟล์รูปภาพ
+            using (var fileStream = new FileStream(Path.Combine(uploadFolder, fileName), FileMode.Create))
+            {
+                await image.CopyToAsync(fileStream);
+            }
+
+            // บันทึกชื่อไฟล์รูปภาพลงในฐานข้อมูล
+            product.ProductPicture = fileName;
+        } else {
+            product.ProductPicture = "noimg.jpg";
+        }
+
         _context.SaveChanges();
 
         // ส่งข้อมูลกลับไปในรูปแบบของ JSON
