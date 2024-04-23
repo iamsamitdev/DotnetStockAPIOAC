@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using StockAPI.Models;
 
-namespace StockAPI.Models;
+namespace StockAPI.Data;
 
 public partial class ApplicationDbContext : DbContext
 {
