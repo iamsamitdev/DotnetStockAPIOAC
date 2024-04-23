@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "3Mh1c7hoPJBA75a9lHU3qDHrNTW5zQh+krZrIj5RA50=",
+  "Hash": "x4q3lTWG50NMybFKl9rQPAXFilBJ2FdkeCtnCaqsLws=",
   "Source": "StockAPI",
   "BasePath": "_content/StockAPI",
   "Mode": "Default",
@@ -15,5 +15,25 @@
       "Pattern": "**"
     }
   ],
-  "Assets": []
+  "Assets": [
+    {
+      "Identity": "D:\\TrainingWorkshop\\DotnetCoreAngularOAC\\StockAPI\\wwwroot\\uploads\\52313ea6-4424-4e25-bec6-76658dc38530.png",
+      "SourceId": "StockAPI",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\TrainingWorkshop\\DotnetCoreAngularOAC\\StockAPI\\wwwroot\\",
+      "BasePath": "_content/StockAPI",
+      "RelativePath": "uploads/52313ea6-4424-4e25-bec6-76658dc38530.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\52313ea6-4424-4e25-bec6-76658dc38530.png"
+    }
+  ]
 }

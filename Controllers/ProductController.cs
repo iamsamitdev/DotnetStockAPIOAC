@@ -62,6 +62,7 @@ public class ProductController: ControllerBase
                 p.UnitPrice,
                 p.UnitInStock,
                 p.CategoryID,
+                p.ProductPicture,
                 p.ModifiedDate,
                 c.CategoryName
             }
@@ -125,7 +126,7 @@ public class ProductController: ControllerBase
     // ฟังก์ชันสำหรับการแก้ไขข้อมูล Product
     // PUT /api/Product/1
     [HttpPut("{id}")]
-    public Task<ActionResult<Product>> UpdateProduct(int id, [FromForm] Product product)
+    public async Task<ActionResult<Product>> UpdateProduct(int id, [FromForm] Product product, IFormFile? image)
     {
          // ดึงข้อมูลสินค้าตาม id
         var existingProduct = _context.Product.FirstOrDefault(p => p.ProductID == id);
@@ -133,7 +134,7 @@ public class ProductController: ControllerBase
         // ถ้าไม่พบข้อมูลจะแสดงข้อความ Not Found
         if (existingProduct == null)
         {
-            return Task.FromResult<ActionResult<Product>>(NotFound());
+            return NotFound();
         }
 
         // แก้ไขข้อมูลสินค้า
@@ -143,11 +144,41 @@ public class ProductController: ControllerBase
         existingProduct.CategoryID = product.CategoryID;
         existingProduct.ModifiedDate = product.ModifiedDate;
 
+        // ตรวจสอบว่ามีการอัพโหลดไฟล์รูปภาพหรือไม่
+        if(image != null){
+            // กำหนดชื่อไฟล์รูปภาพใหม่
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+
+            // บันทึกไฟล์รูปภาพ
+            string uploadFolder = Path.Combine(_env.WebRootPath, "uploads");
+
+            // ตรวจสอบว่าโฟลเดอร์ uploads มีหรือไม่
+            if (!Directory.Exists(uploadFolder))
+            {
+                Directory.CreateDirectory(uploadFolder);
+            }
+
+            using (var fileStream = new FileStream(Path.Combine(uploadFolder, fileName), FileMode.Create))
+            {
+                await image.CopyToAsync(fileStream);
+            }
+
+            // ลบไฟล์รูปภาพเดิม ถ้ามีการอัพโหลดรูปภาพใหม่ และรูปภาพเดิมไม่ใช่ noimg.jpg
+            if(existingProduct.ProductPicture != "noimg.jpg"){
+                System.IO.File.Delete(
+                    Path.Combine(uploadFolder, existingProduct.ProductPicture!)
+                );
+            }
+
+            // บันทึกชื่อไฟล์รูปภาพลงในฐานข้อมูล
+            existingProduct.ProductPicture = fileName;
+        }
+
         // บันทึกข้อมูลลงในฐานข้อมูล
         _context.SaveChanges();
 
         // ส่งข้อมูลกลับไปในรูปแบบของ JSON
-        return Task.FromResult<ActionResult<Product>>(Ok(existingProduct));
+        return Ok(existingProduct);
     }
 
     // ฟังก์ชันสำหรับการลบข้อมูล Product
