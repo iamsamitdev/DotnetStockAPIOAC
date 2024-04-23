@@ -66,7 +66,9 @@ public class ProductController: ControllerBase
                 p.ModifiedDate,
                 c.CategoryName
             }
-        ).ToList();
+        )
+        .OrderByDescending(p => p.ProductID)
+        .ToList();
         
         // ส่งข้อมูลกลับไปในรูปแบบของ JSON
         return Ok(products);
@@ -78,7 +80,22 @@ public class ProductController: ControllerBase
     public ActionResult<Product> GetProductById(int id)
     {
         // LINQ สำหรับการดึงข้อมูลจากตาราง Product ตาม ID
-        var product = _context.Product.Find(id); // select * from Product where ProductID = id
+        var product = _context.Product.Join(
+            _context.Category,
+            p => p.CategoryID,
+            c => c.CategoryID,
+            (p, c) => new {
+                p.ProductID,
+                p.ProductName,
+                p.UnitPrice,
+                p.UnitInStock,
+                p.CategoryID,
+                p.ProductPicture,
+                p.ModifiedDate,
+                c.CategoryName
+            }
+        )
+        .FirstOrDefault(p => p.ProductID == id);
 
         // ส่งข้อมูลกลับไปในรูปแบบของ JSON
         return Ok(product);
@@ -193,6 +210,15 @@ public class ProductController: ControllerBase
         if (existingProduct == null)
         {
             return NotFound();
+        }
+
+        // ตรวจสอบว่ามีไฟล์รูปภาพหรือไม่
+        if(existingProduct.ProductPicture != "noimg.jpg"){
+            // string uploadFolder = Path.Combine(_env.ContentRootPath, "uploads");
+            string uploadFolder = Path.Combine(_env.WebRootPath, "uploads");
+
+            // ลบไฟล์รูปภาพ
+            System.IO.File.Delete(Path.Combine(uploadFolder, existingProduct.ProductPicture!));
         }
 
         // ลบข้อมูลสินค้า
