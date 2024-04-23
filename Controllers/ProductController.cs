@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StockAPI.Data;
 using StockAPI.Models;
 
@@ -24,10 +25,17 @@ public class ProductController: ControllerBase
     }
 
     // ฟังก์ชันสำหรับการดึงข้อมูล Product ทั้งหมด
-    // GET: /api/product
+    // GET: /api/product?page=1&limit=100
     [HttpGet]
-    public ActionResult<Product> GetProduct()
+    public ActionResult<Product> GetProduct(
+        [FromQuery] int page=1, 
+        [FromQuery] int limit=100,
+        [FromQuery] string? searchQuery=null,
+        [FromQuery] int? categoryID=null
+    )
     {
+        
+
         // LINQ สำหรับการดึงข้อมูลจากตาราง Product ทั้งหมด
         // var products = _context.Product.ToList(); // select * from Product
 
@@ -52,7 +60,8 @@ public class ProductController: ControllerBase
 
         // แบบเชื่อมกับตารางอื่น product เชื่อมกับ category แบบ inner join
 
-        var products = _context.Product.Join(
+        // Read from views in database
+        var query = _context.Product.Join(
             _context.Category,
             p => p.CategoryID,
             c => c.CategoryID,
@@ -66,12 +75,39 @@ public class ProductController: ControllerBase
                 p.ModifiedDate,
                 c.CategoryName
             }
-        )
+        );
+
+        // ตรวจสอบว่ามีการค้นหาข้อมูลหรือไม่
+        if(!string.IsNullOrEmpty(searchQuery)){
+            query = query.Where(
+                p => EF.Functions.Like(
+                    p.ProductName!, $"%{searchQuery}%"
+                )
+            );
+        }
+
+        // ตรวจสอบว่ามีการค้นหาข้อมูลตาม CategoryID หรือไม่
+        if(categoryID.HasValue){
+            query = query.Where(
+                p => p.CategoryID == categoryID
+            );
+        }
+
+        // ดึงข้อมูลจาก query และแปลงเป็น List
+        var products = query
         .OrderByDescending(p => p.ProductID)
+        .Skip((page - 1) * limit) // ข้ามข้อมูล
+        .Take(limit) // จำกัดจำนวนข้อมูล
         .ToList();
+
+        // คำนวณจำนวนข้อมูลทั้งหมด
+        var totalRecords = products.Count();
         
         // ส่งข้อมูลกลับไปในรูปแบบของ JSON
-        return Ok(products);
+        return Ok(new {
+            Total = totalRecords,
+            data = products,
+        });
     }
 
     // ฟังก์ชันสำหรับการดึงข้อมูล Product ตาม ID
