@@ -1,12 +1,19 @@
+using System.Data;
+using System.Dynamic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using StockAPI.Data;
 using StockAPI.Models;
 
 namespace StockAPI.Controllers;
 
+// Admin and Manager can access this controller
+// [Authorize(Roles = UserRolesModel.Admin + "," + UserRolesModel.Manager)]
 [ApiController] // กำหนดให้ Class นี้เป็น API Controller
 [Route("api/[controller]")] // กำหนด Route ของ API Controller
+
 public class ProductController: ControllerBase
 {
     // สร้าง Object ของ ApplicationDbContext
@@ -116,25 +123,92 @@ public class ProductController: ControllerBase
     public ActionResult<Product> GetProductById(int id)
     {
         // LINQ สำหรับการดึงข้อมูลจากตาราง Product ตาม ID
-        var product = _context.Product.Join(
-            _context.Category,
-            p => p.CategoryID,
-            c => c.CategoryID,
-            (p, c) => new {
-                p.ProductID,
-                p.ProductName,
-                p.UnitPrice,
-                p.UnitInStock,
-                p.CategoryID,
-                p.ProductPicture,
-                p.ModifiedDate,
-                c.CategoryName
-            }
-        )
-        .FirstOrDefault(p => p.ProductID == id);
+        // var product = _context.Product.Join(
+        //     _context.Category,
+        //     p => p.CategoryID,
+        //     c => c.CategoryID,
+        //     (p, c) => new {
+        //         p.ProductID,
+        //         p.ProductName,
+        //         p.UnitPrice,
+        //         p.UnitInStock,
+        //         p.CategoryID,
+        //         p.ProductPicture,
+        //         p.ModifiedDate,
+        //         c.CategoryName
+        //     }
+        // )
+        // .FirstOrDefault(p => p.ProductID == id);
+        
+        // Raw SQL Query
+        // var product = _context.Product.FromSqlRaw(
+        //     "SELECT p.ProductID, p.ProductName, p.UnitPrice, p.UnitInStock, p.CategoryID, p.ProductPicture, p.CreatedDate, p.ModifiedDate, c.CategoryName FROM Product p INNER JOIN Category c ON p.CategoryID = c.CategoryID WHERE p.ProductID = {0}",
+        // id).FirstOrDefault();
 
+        // Read from view
+        // var product = _context.ProductDetails.FromSqlRaw("SELECT * FROM vw_ProductDetails WHERE ProductID = {0}", id).FirstOrDefault();
+
+        // Read from views in database
+        // using (var command = _context.Database.GetDbConnection().CreateCommand())
+        // {
+        //     command.CommandText = "SELECT * FROM vw_ProductDetails WHERE ProductID = @productId";
+        //     command.Parameters.Add(new SqlParameter("@productId", id));
+        //     _context.Database.OpenConnection();
+            
+        //     using (var result = command.ExecuteReader())
+        //     {
+        //         var list = new List<dynamic>();
+        //         while (result.Read())
+        //         {
+        //             dynamic item = new ExpandoObject();
+        //             for (int i = 0; i < result.FieldCount; i++)
+        //             {
+        //                 ((IDictionary<string, object>)item).Add(result.GetName(i), result[i]);
+        //             }
+        //             list.Add(item);
+        //         }
+        //         return Ok(list);
+        //     }
+        // }
+
+        // Call Stored Procedure
+        var param = new SqlParameter("@ProductID", id);
+
+        var product = _context.Product
+            .FromSqlRaw("EXEC GetProductDetails @ProductID", param)
+            .AsEnumerable()
+            .FirstOrDefault();
+
+        // using (var command = _context.Database.GetDbConnection().CreateCommand())
+        // {
+        //     command.CommandText = "EXEC GetProductDetails @ProductID";
+        //     command.CommandType = CommandType.Text;
+        //     command.Parameters.Add(new SqlParameter("@ProductID", id));
+
+        //     _context.Database.OpenConnection();
+        //     using (var result = command.ExecuteReader())
+        //     {
+        //         if(result.Read()){
+        //             var product = new {
+        //                 ProductID = result.GetInt32(0),
+        //                 ProductName = result.GetString(1),
+        //                 UnitPrice = result.GetDecimal(2),
+        //                 UnitInStock = result.GetInt32(3),
+        //                 CategoryID = result.GetInt32(4),
+        //                 ProductPicture = result.GetString(5),
+        //                 CreatedDate = result.GetDateTime(6),
+        //                 ModifiedDate = result.GetDateTime(7),
+        //                 CategoryName = result.GetString(8)
+        //             };
+
+        //             return Ok(product);
+        //         }
+        //     }
+        // }
+                
         // ส่งข้อมูลกลับไปในรูปแบบของ JSON
         return Ok(product);
+        // return NotFound();
     }
 
     // ฟังก์ชันสำหรับการเพิ่มข้อมูล Product

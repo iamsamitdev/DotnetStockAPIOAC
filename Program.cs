@@ -44,6 +44,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(
@@ -82,13 +83,36 @@ builder.Services.AddSwaggerGen(
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// Use Static Files
+app.UseStaticFiles();
+
 app.UseHttpsRedirection();
+
+// Cors Allow All
+// app.UseCors(
+//     options => {
+//         options.AllowAnyOrigin();
+//         options.AllowAnyMethod();
+//         options.AllowAnyHeader();
+//     }
+// );
+
+// Cors Allow Specific
+app.UseCors(
+    options => {
+        options.WithOrigins(
+            "http://localhost:4200, https://localhost:3000"
+        );
+        options.WithMethods("GET", "POST", "PUT", "DELETE");
+        options.WithHeaders("Authorization", "Content-Type");
+    }
+);
 
 // Add Authentication
 app.UseAuthentication();

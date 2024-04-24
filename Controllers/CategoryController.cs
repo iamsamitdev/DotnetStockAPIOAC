@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StockAPI.Data;
 using StockAPI.Models;
 
 namespace StockAPI.Controllers;
 
+[Authorize] // กำหนดว่า API นี้ต้องมีการ Login ก่อนเข้าถึง
 [ApiController] // กำหนดให้ Class นี้เป็น API Controller
 [Route("api/[controller]")] // กำหนด Route ของ API Controller
 public class CategoryController: ControllerBase
@@ -17,6 +19,7 @@ public class CategoryController: ControllerBase
         _context = context;
     }
 
+    [AllowAnonymous] // กำหนดว่า API นี้สามารถเข้าถึงได้โดยไม่ต้อง Login
     // ทดสอบเขียนฟังก์ชันการเชื่อมต่อ database
     [HttpGet("testconnectdb")]
     public void TestConnectDB()
