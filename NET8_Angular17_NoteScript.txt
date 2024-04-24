@@ -977,6 +977,17 @@ using (var command = _context.Database.GetDbConnection().CreateCommand())
     }
 }
 
+---
+Build and Publish .NET Core Web API
+---
+dotnet publish -c Release
+
+---
 Download Install the ASP.NET Core Module/Hosting Bundle
 ---
 https://dotnet.microsoft.com/permalink/dotnetcore-current-windows-runtime-bundle-installer
+
+-------------------------------------------------------
+✈ DAY 4
+7:  Basic Angular Component
+-------------------------------------------------------
