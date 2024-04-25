@@ -1,0 +1,39 @@
+{
+  "Version": 1,
+  "Hash": "FYLeCD2x2WWs9Sr9MRsaXqj9eMMAtHj4FgxxKTodM08=",
+  "Source": "StockAPI",
+  "BasePath": "_content/StockAPI",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "StockAPI\\wwwroot",
+      "Source": "StockAPI",
+      "ContentRoot": "D:\\TrainingWorkshop\\DotnetCoreAngularOAC\\StockAPI\\wwwroot\\",
+      "BasePath": "_content/StockAPI",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "D:\\TrainingWorkshop\\DotnetCoreAngularOAC\\StockAPI\\wwwroot\\uploads\\52313ea6-4424-4e25-bec6-76658dc38530.png",
+      "SourceId": "StockAPI",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\TrainingWorkshop\\DotnetCoreAngularOAC\\StockAPI\\wwwroot\\",
+      "BasePath": "_content/StockAPI",
+      "RelativePath": "uploads/52313ea6-4424-4e25-bec6-76658dc38530.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\52313ea6-4424-4e25-bec6-76658dc38530.png"
+    }
+  ]
+}

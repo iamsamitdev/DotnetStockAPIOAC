@@ -978,8 +978,15 @@ using (var command = _context.Database.GetDbConnection().CreateCommand())
 }
 
 ---
-Build and Publish .NET Core Web API
+Build and Deploy ASP.NET Core to IIS & How ASP.NET Core Hosting
 ---
+// Build
+dotnet publish -o ./Publish -c Release
+
+// Self-contained Deployment
+dotnet publish -o ./Publish -c Release -r win-x64 --sc 
+
+// Publish to IIS
 dotnet publish -c Release
 
 ---

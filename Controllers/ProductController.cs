@@ -10,7 +10,7 @@ using StockAPI.Models;
 namespace StockAPI.Controllers;
 
 // Admin and Manager can access this controller
-// [Authorize(Roles = UserRolesModel.Admin + "," + UserRolesModel.Manager)]
+[Authorize(Roles = UserRolesModel.Admin + "," + UserRolesModel.Manager)]
 [ApiController] // กำหนดให้ Class นี้เป็น API Controller
 [Route("api/[controller]")] // กำหนด Route ของ API Controller
 
