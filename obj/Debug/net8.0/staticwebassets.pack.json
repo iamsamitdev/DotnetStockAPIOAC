@@ -5,6 +5,10 @@
       "PackagePath": "staticwebassets\\uploads\\52313ea6-4424-4e25-bec6-76658dc38530.png"
     },
     {
+      "Id": "D:\\TrainingWorkshop\\DotnetCoreAngularOAC\\StockAPI\\wwwroot\\uploads\\ad584c05-16a7-4b5f-9c51-781d27079f6f.jpg",
+      "PackagePath": "staticwebassets\\uploads\\ad584c05-16a7-4b5f-9c51-781d27079f6f.jpg"
+    },
+    {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.StockAPI.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
     },

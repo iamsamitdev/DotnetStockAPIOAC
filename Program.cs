@@ -43,6 +43,19 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// CORS with default policy with file upload
+builder.Services.AddCors(
+    options => {
+        options.AddDefaultPolicy(
+            policy  => {
+                policy.AllowAnyOrigin();
+                policy.AllowAnyMethod();
+                policy.AllowAnyHeader();
+            }
+        );
+    }
+);
+
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -89,6 +102,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwaggerUI();
 }
 
+app.UseCors();
+
 // Use Static Files
 app.UseStaticFiles();
 
@@ -104,15 +119,15 @@ app.UseHttpsRedirection();
 // );
 
 // Cors Allow Specific
-app.UseCors(
-    options => {
-        options.WithOrigins(
-            "http://localhost:4200, https://localhost:3000"
-        );
-        options.WithMethods("GET", "POST", "PUT", "DELETE");
-        options.WithHeaders("Authorization", "Content-Type");
-    }
-);
+// app.UseCors(
+//     options => {
+//         options.WithOrigins(
+//             "http://localhost:4200, https://localhost:3000"
+//         );
+//         options.WithMethods("GET", "POST", "PUT", "DELETE");
+//         options.WithHeaders("Authorization", "Content-Type");
+//     }
+// );
 
 // Add Authentication
 app.UseAuthentication();

@@ -138,3 +138,8 @@ D:\TrainingWorkshop\DotnetCoreAngularOAC\StockAPI\obj\Debug\net8.0\StockAPI.sour
 D:\TrainingWorkshop\DotnetCoreAngularOAC\StockAPI\bin\Debug\net8.0\StockAPI.staticwebassets.runtime.json
 D:\TrainingWorkshop\DotnetCoreAngularOAC\StockAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 D:\TrainingWorkshop\DotnetCoreAngularOAC\StockAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\TrainingWorkshop\DotnetCoreAngularOAC\StockAPI\bin\Debug\net8.0\Publish\web.config
+D:\TrainingWorkshop\DotnetCoreAngularOAC\StockAPI\bin\Debug\net8.0\Publish\appsettings.Development.json
+D:\TrainingWorkshop\DotnetCoreAngularOAC\StockAPI\bin\Debug\net8.0\Publish\appsettings.json
+D:\TrainingWorkshop\DotnetCoreAngularOAC\StockAPI\bin\Debug\net8.0\Publish\StockAPI.deps.json
+D:\TrainingWorkshop\DotnetCoreAngularOAC\StockAPI\bin\Debug\net8.0\Publish\StockAPI.runtimeconfig.json

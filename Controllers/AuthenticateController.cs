@@ -10,7 +10,7 @@ namespace StockAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthenticateController: ControllerBase
+public class AuthenticateController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
@@ -18,7 +18,7 @@ public class AuthenticateController: ControllerBase
 
     // Constructor
     public AuthenticateController(
-        UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, 
+        UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager,
         IConfiguration configuration)
     {
         _userManager = userManager;
@@ -72,7 +72,7 @@ public class AuthenticateController: ControllerBase
         var result = await _userManager.CreateAsync(user, model.Password);
 
         // ถ้าสร้างไม่สำเร็จ
-        if(!result.Succeeded)
+        if (!result.Succeeded)
         {
             return StatusCode(
                 StatusCodes.Status500InternalServerError,
@@ -155,7 +155,7 @@ public class AuthenticateController: ControllerBase
         var result = await _userManager.CreateAsync(user, model.Password);
 
         // ถ้าสร้างไม่สำเร็จ
-        if(!result.Succeeded)
+        if (!result.Succeeded)
         {
             return StatusCode(
                 StatusCodes.Status500InternalServerError,
@@ -168,15 +168,18 @@ public class AuthenticateController: ControllerBase
         }
 
         // กำหนด Roles Admin, Manager, User
-        if (!await _roleManager.RoleExistsAsync(UserRolesModel.Admin)){
+        if (!await _roleManager.RoleExistsAsync(UserRolesModel.Admin))
+        {
             await _roleManager.CreateAsync(new IdentityRole(UserRolesModel.Admin));
         }
 
-        if (!await _roleManager.RoleExistsAsync(UserRolesModel.User)){
+        if (!await _roleManager.RoleExistsAsync(UserRolesModel.User))
+        {
             await _roleManager.CreateAsync(new IdentityRole(UserRolesModel.User));
         }
 
-        if (await _roleManager.RoleExistsAsync(UserRolesModel.Manager)){
+        if (await _roleManager.RoleExistsAsync(UserRolesModel.Manager))
+        {
             await _roleManager.CreateAsync(new IdentityRole(UserRolesModel.Manager));
             await _userManager.AddToRoleAsync(user, UserRolesModel.Manager);
         }
@@ -234,7 +237,7 @@ public class AuthenticateController: ControllerBase
         var result = await _userManager.CreateAsync(user, model.Password);
 
         // ถ้าสร้างไม่สำเร็จ
-        if(!result.Succeeded)
+        if (!result.Succeeded)
         {
             return StatusCode(
                 StatusCodes.Status500InternalServerError,
@@ -247,15 +250,18 @@ public class AuthenticateController: ControllerBase
         }
 
         // กำหนด Roles Admin, Manager, User
-        if (!await _roleManager.RoleExistsAsync(UserRolesModel.User)){
+        if (!await _roleManager.RoleExistsAsync(UserRolesModel.User))
+        {
             await _roleManager.CreateAsync(new IdentityRole(UserRolesModel.User));
         }
 
-        if (!await _roleManager.RoleExistsAsync(UserRolesModel.Manager)){
+        if (!await _roleManager.RoleExistsAsync(UserRolesModel.Manager))
+        {
             await _roleManager.CreateAsync(new IdentityRole(UserRolesModel.Manager));
         }
 
-        if (await _roleManager.RoleExistsAsync(UserRolesModel.Admin)){
+        if (await _roleManager.RoleExistsAsync(UserRolesModel.Admin))
+        {
             await _roleManager.CreateAsync(new IdentityRole(UserRolesModel.Admin));
             await _userManager.AddToRoleAsync(user, UserRolesModel.Admin);
         }
@@ -269,6 +275,8 @@ public class AuthenticateController: ControllerBase
 
     // Login for User
     // Post api/authenticate/login-user
+    // Login for User
+    // Post api/authenticate/login-user
     [HttpPost("login")]
     public async Task<ActionResult> Login([FromBody] LoginModel model)
     {
@@ -276,15 +284,15 @@ public class AuthenticateController: ControllerBase
         var user = await _userManager.FindByNameAsync(model.Username!);
 
         // ถ้า login สำเร็จ
-        if(user != null && await _userManager.CheckPasswordAsync(user, model.Password!))
+        if (user != null && await _userManager.CheckPasswordAsync(user, model.Password!))
         {
             var userRoles = await _userManager.GetRolesAsync(user);
 
             var authClaims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName!),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
+        {
+            new Claim(ClaimTypes.Name, user.UserName!),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
 
             foreach (var userRole in userRoles)
             {
@@ -293,10 +301,16 @@ public class AuthenticateController: ControllerBase
 
             var token = GetToken(authClaims);
 
-            return Ok(new 
+            return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = token.ValidTo
+                expiration = token.ValidTo,
+                userData = new
+                {
+                    userName = user.UserName,
+                    email = user.Email,
+                    roles = userRoles
+                }
             });
         }
 
